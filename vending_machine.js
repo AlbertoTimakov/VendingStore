@@ -72,7 +72,7 @@
 								
 								var numberOfCoinByRating = cash.decreaseNumberOfCoinByRating(coins[index].rating);
 
-								if( numberOfCoinByRating > 0 ){
+								if( numberOfCoinByRating >= 0 ){
 
 									count++;
 									payment -= coins[index].value;

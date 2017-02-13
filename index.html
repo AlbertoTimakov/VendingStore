@@ -25,13 +25,7 @@
 <nav role="navigation" class="navbar navbar-default navbar-fixed-top">
     <div class="container">
         <div class="navbar-header">
-            <button type="button" data-target="#navbarCollapse" data-toggle="collapse" class="navbar-toggle">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a href="#" class="navbar-brand">Brand</a>
+            <button type="button" data-target="#navbarCollapse" data-toggle="collapse" class="navbar-toggle"></button>
         </div>
         <div id="navbarCollapse" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
@@ -44,7 +38,13 @@
 <div class="jumbotron">
     <div class="container">
         <h1>The Vending Machine</h1>
-        <p>The Vending Machine is </p>
+        <p>
+        	The Vending Machine is electronic machine used to disperse a product to a consumer after 
+        	a certain amount of money has been put into the machine. 
+        	Vending machines are commonly used to disperse beverages and snack items, 
+        	but in recent years companies have introduced vending machines that disperse other items, 
+        	even including electronic items such as digital cameras or iPods.
+        </p>
     </div>
 </div>
 
@@ -52,15 +52,12 @@
 <div class="container">
 	<div class="row">
 		<div class="col-lg-10">
-			<div class="coffee-vending-machine-container">
-				
-			</div>
+			<h1 style="text-align: center">Vending Machine</h1>
+			<div class="coffee-vending-machine-container"></div>
 		</div>
 		<div class="col-lg-2">
 			<h1>Consumer Cash</h1>
-			<div class="consumer-container">
-
-			</div>
+			<div class="consumer-container"></div>
 		</div>
 	</div>
 </div>
@@ -141,11 +138,27 @@
 		$coffeeVendingMachineContainer.on('click', '.change', function(event){
 			
 			var $target = $(event.target);
+
 			var $digit = $coffeeVendingMachineContainer.find('.digit');
 			var $message = $coffeeVendingMachineContainer.find('.message');
 
-			console.log(vendingMachine.giveChange());
+			var $coins = $('.consumer').find('.coins');
+		
+			var change = vendingMachine.giveChange();
+
 			var payment = vendingMachine.getPayment();
+
+			for( var i = 0; i < change.length; i++ ){
+
+				var $coin = $coins.filter('[data-rating="' + change[i].rating + '"]');
+				var currentCount = $coin.find('.badge').html();
+
+				$coin.find('.badge').html(change[i].count + Number(currentCount));
+
+				console.log(change[i].rating + ', ' + change[i].count);
+
+				consumer.cash.increaseNumberOfCoinByRating(change[i].rating, change[i].count);
+			}
 
 			$digit.find('.digit-value').html(payment);
 			$message.html('Спасибо!');
@@ -154,12 +167,12 @@
 		$coffeeVendingMachineContainer.on('click', '.product-list li', function(event){
 			
 			var $target = $(event.target);
+			var $product = $target.closest('.list-group-item');
 
-			console.log($target);
 			var $digit = $coffeeVendingMachineContainer.find('.digit');
 			var $message = $coffeeVendingMachineContainer.find('.message');
 
-			var product = vendingMachine.getProduct($target.attr('data-id'));
+			var product = vendingMachine.getProduct($product.attr('data-id'));
 			var payment = vendingMachine.getPayment();
 
 			if( product === VendingMachine.PRODUCT_IS_NOT_DEFINED ){
@@ -188,10 +201,14 @@
 			var rating = $target.attr('data-rating');
 
 			var consumerNumberOfCoinsByRating = consumer.cash.decreaseNumberOfCoinByRating(rating);
-			var vendingNumberOfCoinsByRating = vendingMachine.putMoney(rating, number);
 
-			$digit.find('.digit-value').html(vendingNumberOfCoinsByRating);
-			$target.find('.badge').html(consumerNumberOfCoinsByRating);
+			if(	consumerNumberOfCoinsByRating >= 0 ){
+
+				var vendingNumberOfCoinsByRating = vendingMachine.putMoney(rating, number);
+
+				$digit.find('.digit-value').html(vendingNumberOfCoinsByRating);
+				$target.find('.badge').html(consumerNumberOfCoinsByRating);
+			}
 		});
 	});
 
@@ -224,9 +241,6 @@
 		</div>
 		<div class="keyboard">
 			<a class="btn btn-default change">Сдача</a>
-		</div>
-		<div class="footer">
-			dfgdgdgdfgdfg
 		</div>
 	</div>
 </script>

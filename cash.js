@@ -37,12 +37,14 @@
 				}
 			};
 
-			this.increaseNumberOfCoinByRating = function( rating ){
+			this.increaseNumberOfCoinByRating = function( rating, number ){
+
+				number = number || 1;
 
 				var index = getIndexByRating(rating);
 
 				if(index !== null){
-					data[index].count = data[index].count + 1;
+					data[index].count = data[index].count + number;
 					return data[index].count;
 				}else{
 					return null;
@@ -54,8 +56,14 @@
 				var index = getIndexByRating(rating);
 
 				if(index !== null){
-					data[index].count = data[index].count - 1;
-					return data[index].count;
+
+					if( data[index].count > 0 ){
+						data[index].count = data[index].count - 1;
+						return data[index].count;
+					}else{
+						return -1;
+					}
+					
 				}else{
 					return null;
 				}
