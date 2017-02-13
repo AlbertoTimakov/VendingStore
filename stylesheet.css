@@ -63,3 +63,15 @@
    		background-color: #2196F3;
    		cursor: pointer;
    	}
+
+   	.scoreboard{
+   		background-color: #1565C0;
+   		color: white;
+   		padding: 10px;
+   		margin: 5px;
+   	}
+
+   	.product-list li:hover{
+   		background-color: #E0E0E0;
+   		cursor: pointer;
+   	}
