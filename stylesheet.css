@@ -1,0 +1,65 @@
+
+
+    body{
+        padding-top: 70px;
+    }
+
+	.coffee-vending-machine-container .table {
+		display: table;
+		margin: 0;
+	}
+	.coffee-vending-machine-container .table-row {
+	    display: table-row;
+	}
+
+	.coffee-vending-machine-container .table-cell {
+	    display: table-cell;
+	}
+
+	.product-table .table-row{
+		padding: 0;
+	}
+
+	.product-table .table-cell{
+		height: 100px;
+		padding: 25px;
+		text-align: center;
+		border: 1px solid #2196F3;
+		background-color: orange;
+	}
+
+	.coffee-vending-machine-container{
+		width: 400px;
+		height: 500px;
+		margin: 0 auto;
+	}
+
+	.control-panel{
+		background-color: #0D47A1;
+	}
+
+	.control-panel .keyboard{
+		background-color: #78909C;
+		color
+	}
+
+   .keyboard .table-cell{
+   		text-align: center;
+   }
+
+   .keyboard .table-cell:hover{
+   		color: white;
+   		background-color: #607D8B;
+   		cursor: pointer;
+   }
+
+   .coffee-vending-machine{
+   		border-radius: 5px; 
+   		background-color: #2196F3;
+   		padding: 50px 20px;
+   	}
+
+   	.coins:hover{
+   		background-color: #2196F3;
+   		cursor: pointer;
+   	}

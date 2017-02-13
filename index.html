@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Vending Machine</title>
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="stylesheet.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	
+	<script src="cash.js"></script>
+	<script src="vending_machine.js"></script>
+
+</head>
+<body>
+<nav role="navigation" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" data-target="#navbarCollapse" data-toggle="collapse" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="#" class="navbar-brand">Brand</a>
+        </div>
+        <div id="navbarCollapse" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="#">Home</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="jumbotron">
+    <div class="container">
+        <h1>The Vending Machine</h1>
+        <p>The Vending Machine is </p>
+    </div>
+</div>
+<div class="container">
+	<div class="row">
+		<div class="col-lg-10">
+			<div class="coffee-vending-machine-container">
+				<div class="coffee-vending-machine table">
+					<div class="table-row">
+						<div class="glass-case table-cell">
+							<div class="product-table table">
+								<ul class="table-row">
+									<li class="table-cell" data-id='1'>
+										Кофе
+									</li>
+									<li class="table-cell" data-id='2'>
+										Кофе
+									</li>
+								</ul>
+								<ul class="table-row">
+									<li class="table-cell" data-id='3'>
+										Чай
+									</li>
+									<li class="table-cell" data-id='4'>
+										Сок
+									</li>
+								</ul>
+							</div>
+						</div>
+						<div class="control-panel table-cell">
+
+							<div class="scoreboard">
+								<div class="digit"></div>
+								<div class="message"></div>
+							</div>
+							<div class="keyboard table">
+								<ul class="table-row">
+									<li class="table-cell">1</li>
+									<li class="table-cell">2</li>
+									<li class="table-cell">3</li>
+								</ul>
+								<ul class="table-row">
+									<li class="table-cell">4</li>
+									<li class="table-cell">5</li>
+									<li class="table-cell">6</li>
+								</ul>
+								<ul class="table-row">
+									<li class="table-cell">7</li>
+									<li class="table-cell">8</li>
+									<li class="table-cell">9</li>
+								</ul>
+								<ul class="table-row">
+									<li class="table-cell">0</li>
+									<li class="table-cell">
+										<a class="btn btn-default change">Сдача</a>
+									</li>
+									<li class="table-cell">
+										<a class="btn btn-default product">Товар</a>
+									</li>
+								</ul>
+							</div>
+
+						</div>
+					</div>
+					<div class="table-row">
+						<div class="footer table-cell">
+							dfgdgdgdfgdfg
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-lg-2">
+			<h1>Consumer Cash</h1>
+			<div class="consumer">
+				<div class="consumer-cash">
+					<ul class="list-of-coins-by-rating list-group">
+						<li class="coins list-group-item" data-rating="1 рубль">1 рубль<span class="badge">10</span></li>
+						<li class="coins list-group-item" data-rating="2 рубля">2 рубля <span class="badge">2</span></li>
+						<li class="coins list-group-item" data-rating="5 рублей">5 рублей <span class="badge">11</span></li>
+						<li class="coins list-group-item" data-rating="10 рублей">10 рублей <span class="badge">5</span></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+
+	function Consumer(data){
+		this.cash = new Cash(data);
+	};
+
+	function Message(text, status){
+		return {text: text, status: status};
+	}
+
+	function getJson(){
+		return [
+			{rating: '10 рублей', count: 5, value: 10},
+			{rating: '1 рубль', count: 10, value: 1},
+			{rating: '2 рубля', count: 2, value: 2},
+			{rating: '5 рублей', count: 11, value: 5},
+		];
+	};
+	
+	function getVendingMachineCashJson(){
+		return [
+			{rating: '10 рублей', count: 5, value: 10},
+			{rating: '1 рубль', count: 10, value: 1},
+			{rating: '2 рубля', count: 2, value: 2},
+			{rating: '5 рублей', count: 11, value: 5},
+		];
+	};
+
+	function getProductListJson(){
+		return [
+			{ id: 1, name: 'Кофе', count: 5, price: 10 },
+			{ id: 2, name: 'Кофе с молоком', count: 10, price: 1 },
+			{ id: 3, name: 'Чай', count: 2, price: 2 },
+			{ id: 4, name: 'Сок', count: 11, price: 5 },
+		];
+	};
+	
+	$(function(){
+
+		var $consumerCash = $('.consumer-cash');
+		var $productTable = $('.product-table');
+
+		var $coins = $('.consumer-cash');
+		var $scoreboard = $('.scoreboard');
+		var $change = $('.change');
+		var $coffeeVendingMachine = $('.coffee-vending-machine');
+		
+		var json = getJson();
+		var vendingMachineCash = getVendingMachineCashJson();
+		var productList = getProductListJson();
+
+		var consumer = new Consumer(json);
+		var vendingMachine = new VendingMachine( productList, vendingMachineCash );
+
+		$coffeeVendingMachine.on('click', '.change', function(event){
+			
+			var $target = $(event.target);
+			var $digit = $scoreboard.find('.digit');
+			var $message = $scoreboard.find('.message');
+
+			console.log(vendingMachine.giveChange());
+			var payment = vendingMachine.getPayment();
+
+			$digit.html(payment);
+			$message.html('Спасибо!');
+		});
+
+		$consumerCash.on('click', '.coins', function(event){
+
+			$target = $(event.target);
+
+			var number = 1;
+			var rating = $target.attr('data-rating');
+
+			var consumerNumberOfCoinsByRating = consumer.cash.decreaseNumberOfCoinByRating(rating);
+			var vendingNumberOfCoinsByRating = vendingMachine.putMoney(rating, number);
+
+			$scoreboard.find('.digit').html(vendingNumberOfCoinsByRating);
+			$target.find('.badge').html(consumerNumberOfCoinsByRating);
+		});
+
+		$coffeeVendingMachine.on('click', '.product-table li', function(event){
+			
+			var $target = $(event.target);
+			var $digit = $scoreboard.find('.digit');
+			var $message = $scoreboard.find('.message');
+
+			var product = vendingMachine.getProduct($target.attr('data-id'));
+			var payment = vendingMachine.getPayment();
+
+			if( product === VendingMachine.PRODUCT_IS_NOT_DEFINED ){
+				console.log('Продукт не определен');
+				return false;
+			}else if( product === VendingMachine.NOT_ENOUGH_MONEY ){
+				$message.html('Недостаточно средств!');
+				return false;
+			}else if( product === VendingMachine.PRODUCT_ENDED ){
+				$message.html('Продукт закончился');
+				return false;
+			}
+
+			$digit.html(payment);
+			$message.html('Спасибо!');
+		});
+	});
+
+</script>
+
+</body>
+</html>
