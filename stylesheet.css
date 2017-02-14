@@ -75,3 +75,8 @@
    		background-color: #E0E0E0;
    		cursor: pointer;
    	}
+
+   	.info-about-vending:hover{
+   		color: #BDBDBD;
+   		cursor: pointer;
+   	}

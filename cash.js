@@ -39,7 +39,9 @@
 
 			this.increaseNumberOfCoinByRating = function( rating, number ){
 
-				number = number || 1;
+				if( number == null ){
+					number = 1;
+				}
 
 				var index = getIndexByRating(rating);
 

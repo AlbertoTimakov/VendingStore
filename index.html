@@ -11,6 +11,9 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
 
 	<link rel="stylesheet" href="stylesheet.css">
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
@@ -68,42 +71,33 @@
 		this.cash = new Cash(data);
 	};
 
-	function Message(text, status){
-		return {text: text, status: status};
-	}
-
 	//Определение функций, возвращающих как-бы json данные
 	function getConsumerCashJson(){
-		return {
-			coins: [
+		return [
 				{rating: '10 рублей', count: 5, value: 10},
-				{rating: '1 рубль', count: 10, value: 1},
+				{rating: '5 рублей', count: 11, value: 5},
 				{rating: '2 рубля', count: 2, value: 2},
-				{rating: '5 рублей', count: 11, value: 5}
-			]
-		};
+				{rating: '1 рубль', count: 10, value: 1}
+
+			];
 	};
 	
 	function getVendingMachineCashJson(){
-		return {
-			coins: [
+		return [
 				{rating: '10 рублей', count: 5, value: 10},
-				{rating: '1 рубль', count: 10, value: 1},
+				{rating: '5 рублей', count: 11, value: 5},
 				{rating: '2 рубля', count: 2, value: 2},
-				{rating: '5 рублей', count: 11, value: 5}
-			]
-		};
+				{rating: '1 рубль', count: 10, value: 1}
+			];
 	};
 
 	function getProductListJson(){
-		return {
-			products: [
+		return [
 				{ id: 1, name: 'Кофе', count: 5, price: 10 },
 				{ id: 2, name: 'Кофе с молоком', count: 10, price: 1 },
 				{ id: 3, name: 'Чай', count: 2, price: 2 },
 				{ id: 4, name: 'Сок', count: 11, price: 5 }
-			]
-		};
+			];
 	};
 
 	//После того, как документ загружен
@@ -120,19 +114,19 @@
 
 		//Вставка шаблона вендинговой машины
 		var vendingMachineTemplate = $('#vending-machine-template').html();
-		var renderedVendingMustacheTemplate = Mustache.render(vendingMachineTemplate, productList);
+		var renderedVendingMustacheTemplate = Mustache.render( vendingMachineTemplate, { products: productList, coins: vendingMachineCash } );
 
 		$coffeeVendingMachineContainer.html(renderedVendingMustacheTemplate);
 
 		//Вставка шаблона кошелька покупателя
 		var consumerTemplate = $('#consumer-template').html();
-		var renderedConsumerTemplate = Mustache.render(consumerTemplate, consumerCash);
+		var renderedConsumerTemplate = Mustache.render( consumerTemplate, { coins: consumerCash } );
 
 		$consumerContainer.html(renderedConsumerTemplate);
 
 		//Инициализация покупателя и вендинговой машины
-		var consumer = new Consumer(consumerCash.coins);
-		var vendingMachine = new VendingMachine( productList.products, vendingMachineCash.coins );
+		var consumer = new Consumer(consumerCash);
+		var vendingMachine = new VendingMachine( productList, vendingMachineCash );
 
 		//Определение обработчиков вендинговой машины
 		$coffeeVendingMachineContainer.on('click', '.change', function(event){
@@ -142,22 +136,20 @@
 			var $digit = $coffeeVendingMachineContainer.find('.digit');
 			var $message = $coffeeVendingMachineContainer.find('.message');
 
-			var $coins = $('.consumer').find('.coins');
-		
+			var $consumerCash = $('.consumer').find('.coins');
+			var $vendingCash = $('.coffee-vending-machine').find('.coins');
+
 			var change = vendingMachine.giveChange();
 
 			var payment = vendingMachine.getPayment();
 
 			for( var i = 0; i < change.length; i++ ){
 
-				var $coin = $coins.filter('[data-rating="' + change[i].rating + '"]');
-				var currentCount = $coin.find('.badge').html();
+				var consumerNumberOfCoinsByRating = consumer.cash.increaseNumberOfCoinByRating( change[i].rating, change[i].count );
+				$consumerCash.filter('[data-rating="' + change[i].rating + '"]').find('.badge').html( consumerNumberOfCoinsByRating );
 
-				$coin.find('.badge').html(change[i].count + Number(currentCount));
-
-				console.log(change[i].rating + ', ' + change[i].count);
-
-				consumer.cash.increaseNumberOfCoinByRating(change[i].rating, change[i].count);
+				var vendingNumberOfCoinsByRating = vendingMachine.getCash().getNumberOfCoinByRating( change[i].rating );
+				$vendingCash.filter('[data-rating="' + change[i].rating + '"]').find('.badge').html( vendingNumberOfCoinsByRating );
 			}
 
 			$digit.find('.digit-value').html(payment);
@@ -176,14 +168,20 @@
 			var payment = vendingMachine.getPayment();
 
 			if( product === VendingMachine.PRODUCT_IS_NOT_DEFINED ){
+
 				console.log('Продукт не определен');
 				return false;
 			}else if( product === VendingMachine.NOT_ENOUGH_MONEY ){
+
 				$message.html('Недостаточно средств!');
 				return false;
 			}else if( product === VendingMachine.PRODUCT_ENDED ){
+
 				$message.html('Продукт закончился');
 				return false;
+			}else{
+
+				$product.find('.badge').html(product.count);
 			}
 
 			$digit.find('.digit-value').html(payment);
@@ -204,9 +202,13 @@
 
 			if(	consumerNumberOfCoinsByRating >= 0 ){
 
-				var vendingNumberOfCoinsByRating = vendingMachine.putMoney(rating, number);
+				var money = vendingMachine.putMoney(rating, number);
 
-				$digit.find('.digit-value').html(vendingNumberOfCoinsByRating);
+				var vendingNumberOfCoinsByRating = vendingMachine.getCash().getNumberOfCoinByRating( rating );
+
+				$('.coffee-vending-machine').find('.coins').filter('[data-rating="' + rating + '"]').find('.badge').html( vendingNumberOfCoinsByRating );
+
+				$digit.find('.digit-value').html(money);
 				$target.find('.badge').html(consumerNumberOfCoinsByRating);
 			}
 		});
@@ -224,6 +226,15 @@
 				<span class="digit-value"></span>
 			</div>
 		</div>
+		<div class="vending-machine-info">
+			<div class="vending-machine-cash">
+				<ul class="list-of-coins-by-rating list-group">
+					{{#coins}}
+						<li class="coins list-group-item" data-rating="{{rating}}">{{rating}}<span class="badge">{{count}}</span></li>
+					{{/coins}}
+				</ul>
+			</div>
+		</div>
 		<div class="glass-case">
 			<div class="product-list">
 				<ul class="list-group">
@@ -231,8 +242,13 @@
 						<li class="list-group-item" data-id='{{id}}'>
 							<div class="product-image">{{img}}</div>
 							<div class="product-info">
-								<span class="product-name">{{name}}</span>
-								<span class="product-price">{{price}}</span>
+								<div class="product-name">
+									<span>{{name}}</span>
+								</div>
+								<div class="product-price">
+									<span>price: {{price}}</span>
+								</div>
+								<span class="badge">{{count}}</span>
 							</div>
 						</li>
 					{{/products}}
@@ -243,6 +259,10 @@
 			<a class="btn btn-default change">Сдача</a>
 		</div>
 	</div>
+</script>
+
+<script id="vending-machine-info-template" type="text/html">
+
 </script>
 
 <!--Определение шаблона кошелька покупателя-->

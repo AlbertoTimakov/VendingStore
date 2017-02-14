@@ -1,9 +1,9 @@
 	
 
-		function VendingMachine( product, cash ){
+		function VendingMachine( products, cash ){
 
 				var cash = new Cash(cash);
-				var product = JSON.parse(JSON.stringify(product));
+				var products = JSON.parse(JSON.stringify(products));
 				var payment = 0;
 
 				VendingMachine.PRODUCT_ENDED = -1;
@@ -12,6 +12,10 @@
 
 				this.getPayment = function(){
 					return payment;
+				};
+
+				this.getCash = function(){
+					return cash;
 				};
 
 				this.putMoney = function(rating, number){
@@ -30,16 +34,21 @@
 
 				this.getProduct = function( id ){
 
-					for( var i = 0; i < product.length; i++ ){
+					for( var i = 0; i < products.length; i++ ){
+						
+						var product = products[i];
 
-						if( product[i].id == id ){
+						if( product.id == id ){
 							
-							if( product[i].count > 0 ){
+							if( product.count > 0 ){
 
-								if( product[i].price <= payment ){
+								if( product.price <= payment ){
 
-									payment -= product[i].price;
-									return product[i];
+									payment -= product.price;
+									
+									product.count -= 1;
+
+									return product;
 								}else{
 
 									return VendingMachine.NOT_ENOUGH_MONEY;
@@ -60,43 +69,25 @@
 
 					var change = [];
 
-					var index = 0;
+					for(var i = 0; payment > 0 && i < coins.length; i++){
 
-					var count = 0;
+						var count = 0;
 
-					while( payment > 0 ){
+						while( payment >= coins[i].value ){
 
-						if( index < coins.length ){
+							var restOfCoinsByRating = cash.decreaseNumberOfCoinByRating(coins[i].rating);
 
-							if( payment >= coins[index].value ){
-								
-								var numberOfCoinByRating = cash.decreaseNumberOfCoinByRating(coins[index].rating);
+							if( restOfCoinsByRating >= 0 ){
 
-								if( numberOfCoinByRating >= 0 ){
+								count++;
 
-									count++;
-									payment -= coins[index].value;
-
-									if(payment === 0){
-										change.push( { rating: coins[index].rating, value: coins[index].value, count: count} );
-									}
-								}else{
-									change.push( { rating: coins[index].rating, value: coins[index].value, count: count} );
-
-									count = 0;
-									index += 1;
-								}
+								payment -= coins[i].value;
 							}else{
-
-									change.push( { rating: coins[index].rating, value: coins[index].value, count: count} );
-
-									count = 0;
-									index += 1;
+								break;
 							}
-						}else{
-							return;
 						}
-						
+
+						change.push( { rating: coins[i].rating, value: coins[i].value, count: count } );
 					}
 
 					return change;
