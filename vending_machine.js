@@ -18,11 +18,11 @@
 					return cash;
 				};
 
-				this.putMoney = function(rating, number){
+				this.putMoney = function(id, number){
 
-					cash.increaseNumberOfCoinByRating(rating);
+					cash.increaseNumberOfCoins(id);
 
-					payment = payment + cash.getValueByRating(rating) * number;
+					payment = payment + cash.getValueOfCoin(id) * number;
 
 					return payment;
 				};
@@ -65,29 +65,40 @@
 
 				this.giveChange = function(){
 
-					var coins = [ {rating: '10 рублей', value: 10}, {rating: '5 рублей', value: 5}, {rating: '2 рубля', value: 2}, {rating: '1 рубль', value: 1} ];
+					var coins = [ 
+						{ id: 1, name: '10 рублей', value: 10 }, 
+						{ id: 2, name: '5 рублей', value: 5 }, 
+						{ id: 3, name: '2 рубля', value: 2 }, 
+						{ id: 4, name: '1 рубль', value: 1 } 
+					];
 
 					var change = [];
 
-					for(var i = 0; payment > 0 && i < coins.length; i++){
+					for( var i = 0; payment > 0 && i < coins.length; i++ ){
 
 						var count = 0;
 
 						while( payment >= coins[i].value ){
 
-							var restOfCoinsByRating = cash.decreaseNumberOfCoinByRating(coins[i].rating);
+							var restOfCoins = cash.decreaseNumberOfCoins( coins[i].id );
 
-							if( restOfCoinsByRating >= 0 ){
+							if( restOfCoins >= 0 ){
 
 								count++;
 
 								payment -= coins[i].value;
 							}else{
+
 								break;
 							}
 						}
 
-						change.push( { rating: coins[i].rating, value: coins[i].value, count: count } );
+						change.push( { 
+							id: coins[i].id, 
+							name: coins[i].name, 
+							value: coins[i].value, 
+							count: count 
+						} );
 					}
 
 					return change;

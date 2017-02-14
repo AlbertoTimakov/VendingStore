@@ -4,10 +4,10 @@
 
 			var data = JSON.parse( JSON.stringify( data ) )
 
-			var getIndexByRating = function( rating ){
+			var getIndexOfCoin = function( id ){
 
 				for( var index = 0; index < data.length; index++ ){
-					if( data[index].rating == rating ){
+					if( data[index].id == id ){
 						return index;
 					}
 				}
@@ -15,9 +15,9 @@
 				return null;
 			};
 
-			this.getNumberOfCoinByRating = function( rating ){
+			this.getNumberOfCoins = function( id ){
 
-				var index = getIndexByRating(rating);
+				var index = getIndexOfCoin(id);
 
 				if(index !== null){
 					return data[index].count;
@@ -26,9 +26,9 @@
 				}
 			};
 
-			this.getValueByRating = function( rating ){
+			this.getValueOfCoin = function( id ){
 
-				var index = getIndexByRating( rating );
+				var index = getIndexOfCoin( id );
 
 				if(index !== null){
 					return data[index].value;
@@ -37,13 +37,13 @@
 				}
 			};
 
-			this.increaseNumberOfCoinByRating = function( rating, number ){
+			this.increaseNumberOfCoins = function( id, number ){
 
 				if( number == null ){
 					number = 1;
 				}
 
-				var index = getIndexByRating(rating);
+				var index = getIndexOfCoin(id);
 
 				if(index !== null){
 					data[index].count = data[index].count + number;
@@ -53,9 +53,9 @@
 				}
 			};
 
-			this.decreaseNumberOfCoinByRating = function( rating ){
+			this.decreaseNumberOfCoins = function( id ){
 
-				var index = getIndexByRating(rating);
+				var index = getIndexOfCoin(id);
 
 				if(index !== null){
 

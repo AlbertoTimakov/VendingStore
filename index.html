@@ -74,20 +74,19 @@
 	//Определение функций, возвращающих как-бы json данные
 	function getConsumerCashJson(){
 		return [
-				{rating: '10 рублей', count: 5, value: 10},
-				{rating: '5 рублей', count: 11, value: 5},
-				{rating: '2 рубля', count: 2, value: 2},
-				{rating: '1 рубль', count: 10, value: 1}
-
+				{ id: 1, name: '10 рублей', count: 5, value: 10},
+				{ id: 2, name: '5 рублей', count: 11, value: 5},
+				{ id: 3, name: '2 рубля', count: 2, value: 2},
+				{ id: 4, name: '1 рубль', count: 10, value: 1}
 			];
 	};
 	
 	function getVendingMachineCashJson(){
 		return [
-				{rating: '10 рублей', count: 5, value: 10},
-				{rating: '5 рублей', count: 11, value: 5},
-				{rating: '2 рубля', count: 2, value: 2},
-				{rating: '1 рубль', count: 10, value: 1}
+				{id: 1, name: '10 рублей', count: 5, value: 10},
+				{id: 2, name: '5 рублей', count: 11, value: 5},
+				{id: 3, name: '2 рубля', count: 2, value: 2},
+				{id: 4, name: '1 рубль', count: 10, value: 1}
 			];
 	};
 
@@ -145,11 +144,11 @@
 
 			for( var i = 0; i < change.length; i++ ){
 
-				var consumerNumberOfCoinsByRating = consumer.cash.increaseNumberOfCoinByRating( change[i].rating, change[i].count );
-				$consumerCash.filter('[data-rating="' + change[i].rating + '"]').find('.badge').html( consumerNumberOfCoinsByRating );
+				var consumerNumberOfCoinsByRating = consumer.cash.increaseNumberOfCoins( change[i].id, change[i].count );
+				$consumerCash.filter('[data-id="' + change[i].id + '"]').find('.badge').html( consumerNumberOfCoinsByRating );
 
-				var vendingNumberOfCoinsByRating = vendingMachine.getCash().getNumberOfCoinByRating( change[i].rating );
-				$vendingCash.filter('[data-rating="' + change[i].rating + '"]').find('.badge').html( vendingNumberOfCoinsByRating );
+				var vendingNumberOfCoinsByRating = vendingMachine.getCash().getNumberOfCoins( change[i].id );
+				$vendingCash.filter('[data-id="' + change[i].id + '"]').find('.badge').html( vendingNumberOfCoinsByRating );
 			}
 
 			$digit.find('.digit-value').html(payment);
@@ -196,20 +195,20 @@
 			$target = $(event.target);
 
 			var number = 1;
-			var rating = $target.attr('data-rating');
+			var id = $target.attr('data-id');
 
-			var consumerNumberOfCoinsByRating = consumer.cash.decreaseNumberOfCoinByRating(rating);
+			var consumerNumberOfCoins = consumer.cash.decreaseNumberOfCoins(id);
 
-			if(	consumerNumberOfCoinsByRating >= 0 ){
+			if(	consumerNumberOfCoins >= 0 ){
 
-				var money = vendingMachine.putMoney(rating, number);
+				var money = vendingMachine.putMoney( id, number );
 
-				var vendingNumberOfCoinsByRating = vendingMachine.getCash().getNumberOfCoinByRating( rating );
+				var vendingNumberOfCoins = vendingMachine.getCash().getNumberOfCoins( id );
 
-				$('.coffee-vending-machine').find('.coins').filter('[data-rating="' + rating + '"]').find('.badge').html( vendingNumberOfCoinsByRating );
+				$('.coffee-vending-machine').find('.coins').filter('[data-id="' + id + '"]').find('.badge').html( vendingNumberOfCoins );
 
 				$digit.find('.digit-value').html(money);
-				$target.find('.badge').html(consumerNumberOfCoinsByRating);
+				$target.find('.badge').html(consumerNumberOfCoins);
 			}
 		});
 	});
@@ -230,7 +229,7 @@
 			<div class="vending-machine-cash">
 				<ul class="list-of-coins-by-rating list-group">
 					{{#coins}}
-						<li class="coins list-group-item" data-rating="{{rating}}">{{rating}}<span class="badge">{{count}}</span></li>
+						<li class="coins list-group-item" data-id="{{id}}">{{name}}<span class="badge">{{count}}</span></li>
 					{{/coins}}
 				</ul>
 			</div>
@@ -271,7 +270,7 @@
 		<div class="consumer-cash">
 			<ul class="list-of-coins-by-rating list-group">
 				{{#coins}}
-					<li class="coins list-group-item" data-rating="{{rating}}">{{rating}}<span class="badge">{{count}}</span></li>
+					<li class="coins list-group-item" data-id="{{id}}">{{name}}<span class="badge">{{count}}</span></li>
 				{{/coins}}
 			</ul>
 		</div>
