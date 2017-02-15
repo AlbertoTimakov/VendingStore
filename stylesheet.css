@@ -1,82 +1,34 @@
 
 
     body{
-        padding-top: 70px;
+      padding-top: 70px;
     }
 
-	.coffee-vending-machine-container .table {
-		display: table;
-		margin: 0;
-	}
-	.coffee-vending-machine-container .table-row {
-	    display: table-row;
-	}
-
-	.coffee-vending-machine-container .table-cell {
-	    display: table-cell;
-	}
-
-	.product-table .table-row{
-		padding: 0;
-	}
-
-	.product-table .table-cell{
-		height: 100px;
-		padding: 25px;
-		text-align: center;
-		border: 1px solid #2196F3;
-		background-color: orange;
-	}
-
-	.coffee-vending-machine-container{
-		width: 400px;
-		height: 500px;
-		margin: 0 auto;
-	}
-
-	.control-panel{
-		background-color: #0D47A1;
-	}
-
-	.control-panel .keyboard{
-		background-color: #78909C;
-		color
-	}
-
-   .keyboard .table-cell{
-   		text-align: center;
+   .vending-machine-container{
+      width: 400px;
+   	height: 500px;
+   	margin: 0 auto;
    }
 
-   .keyboard .table-cell:hover{
-   		color: white;
-   		background-color: #607D8B;
-   		cursor: pointer;
+   .vending-machine{
+   	border-radius: 5px; 
+   	background-color: #2196F3;
+   	padding: 50px 20px;
    }
 
-   .coffee-vending-machine{
-   		border-radius: 5px; 
-   		background-color: #2196F3;
-   		padding: 50px 20px;
-   	}
+   .coin-denominations:hover{
+   	background-color: #2196F3;
+   	cursor: pointer;
+   }
 
-   	.coins:hover{
-   		background-color: #2196F3;
-   		cursor: pointer;
-   	}
+   .scoreboard{
+   	background-color: #1565C0;
+   	color: white;
+   	padding: 10px;
+   	margin: 5px;
+   }
 
-   	.scoreboard{
-   		background-color: #1565C0;
-   		color: white;
-   		padding: 10px;
-   		margin: 5px;
-   	}
-
-   	.product-list li:hover{
-   		background-color: #E0E0E0;
-   		cursor: pointer;
-   	}
-
-   	.info-about-vending:hover{
-   		color: #BDBDBD;
-   		cursor: pointer;
-   	}
+   .products li:hover{
+   	background-color: #E0E0E0;
+   	cursor: pointer;
+   }

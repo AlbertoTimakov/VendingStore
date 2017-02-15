@@ -17,7 +17,7 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-	<script src="../Lib/MustacheJs/src/js/mustache.js"></script>
+	<script src="Lib/MustacheJs/src/js/mustache.js"></script>
 	<script src="cash.js"></script>
 	<script src="vending_machine.js"></script>
 
@@ -56,7 +56,7 @@
 	<div class="row">
 		<div class="col-lg-10">
 			<h1 style="text-align: center">Vending Machine</h1>
-			<div class="coffee-vending-machine-container"></div>
+			<div class="vending-machine-container"></div>
 		</div>
 		<div class="col-lg-2">
 			<h1>Consumer Cash</h1>
@@ -74,19 +74,19 @@
 	//Определение функций, возвращающих как-бы json данные
 	function getConsumerCashJson(){
 		return [
-				{ id: 1, name: '10 рублей', count: 5, value: 10},
-				{ id: 2, name: '5 рублей', count: 11, value: 5},
-				{ id: 3, name: '2 рубля', count: 2, value: 2},
-				{ id: 4, name: '1 рубль', count: 10, value: 1}
+				{ id: 1, name: '10 рублей', count: 15, value: 10 },
+				{ id: 2, name: '5 рублей', count: 20, value: 5 },
+				{ id: 3, name: '2 рубля', count: 30, value: 2 },
+				{ id: 4, name: '1 рубль', count: 10, value: 1 }
 			];
 	};
 	
 	function getVendingMachineCashJson(){
 		return [
-				{id: 1, name: '10 рублей', count: 5, value: 10},
-				{id: 2, name: '5 рублей', count: 11, value: 5},
-				{id: 3, name: '2 рубля', count: 2, value: 2},
-				{id: 4, name: '1 рубль', count: 10, value: 1}
+				{ id: 1, name: '10 рублей', count: 100, value: 10 },
+				{ id: 2, name: '5 рублей', count: 100, value: 5 },
+				{ id: 3, name: '2 рубля', count: 100, value: 2 },
+				{ id: 4, name: '1 рубль', count: 100, value: 1 }
 			];
 	};
 
@@ -102,24 +102,32 @@
 	//После того, как документ загружен
 	$(function(){
 
-		//Определение jquery переменных
-		var $consumerContainer = $('.consumer-container');
-		var $coffeeVendingMachineContainer = $('.coffee-vending-machine-container');
+		//Определение шаблонов
+		var cashTemplate = $('#cash-template').html();
+		var vendingMachineTemplate = $('#vending-machine-template').html();
+		var consumerTemplate = $('#consumer-template').html();
 
-		//Emulation of getting Json data from some server;
+		//Определение основных контейнеров
+		var $consumerContainer = $('.consumer-container');
+		var $vendingMachineContainer = $('.vending-machine-container');
+
+		//Эмуляция JSON данных
 		var consumerCash = getConsumerCashJson();
 		var vendingMachineCash = getVendingMachineCashJson();
 		var productList = getProductListJson();
 
 		//Вставка шаблона вендинговой машины
-		var vendingMachineTemplate = $('#vending-machine-template').html();
-		var renderedVendingMustacheTemplate = Mustache.render( vendingMachineTemplate, { products: productList, coins: vendingMachineCash } );
+		var renderedVendingMustacheTemplate = Mustache.render( vendingMachineTemplate, { 
+			products: productList, 
+			cash: Mustache.render( cashTemplate, { coins: vendingMachineCash } )
+		} );
 
-		$coffeeVendingMachineContainer.html(renderedVendingMustacheTemplate);
+		$vendingMachineContainer.html(renderedVendingMustacheTemplate);
 
 		//Вставка шаблона кошелька покупателя
-		var consumerTemplate = $('#consumer-template').html();
-		var renderedConsumerTemplate = Mustache.render( consumerTemplate, { coins: consumerCash } );
+		var renderedConsumerTemplate = Mustache.render( consumerTemplate, { 
+			cash: Mustache.render( cashTemplate, { coins: consumerCash } )
+		} );
 
 		$consumerContainer.html(renderedConsumerTemplate);
 
@@ -128,15 +136,17 @@
 		var vendingMachine = new VendingMachine( productList, vendingMachineCash );
 
 		//Определение обработчиков вендинговой машины
-		$coffeeVendingMachineContainer.on('click', '.change', function(event){
+		$vendingMachineContainer.on('click', '.change', function(event){
 			
 			var $target = $(event.target);
 
-			var $digit = $coffeeVendingMachineContainer.find('.digit');
-			var $message = $coffeeVendingMachineContainer.find('.message');
+			var $vendingMachine = $target.closest('.vending-machine');
+			
+			var $digit = $vendingMachine.find('.digit');
+			var $message = $vendingMachine.find('.message');
 
-			var $consumerCash = $('.consumer').find('.coins');
-			var $vendingCash = $('.coffee-vending-machine').find('.coins');
+			var $consumerCash = $('.consumer').find('.coin-denomination');
+			var $vendingCash = $vendingMachine.find('.coin-denomination');
 
 			var change = vendingMachine.giveChange();
 
@@ -155,13 +165,15 @@
 			$message.html('Спасибо!');
 		});
 
-		$coffeeVendingMachineContainer.on('click', '.product-list li', function(event){
+		$vendingMachineContainer.on('click', '.products li', function(event){
 			
 			var $target = $(event.target);
+
+			var $vendingMachine = $target.closest('.vending-machine');
 			var $product = $target.closest('.list-group-item');
 
-			var $digit = $coffeeVendingMachineContainer.find('.digit');
-			var $message = $coffeeVendingMachineContainer.find('.message');
+			var $digit = $vendingMachine.find('.digit');
+			var $message = $vendingMachine.find('.message');
 
 			var product = vendingMachine.getProduct($product.attr('data-id'));
 			var payment = vendingMachine.getPayment();
@@ -188,15 +200,18 @@
 		});
 
 		//Определение обработчиков кошелька покупателя
-		$consumerContainer.on('click', '.coins', function(event){
-
-			var $digit = $coffeeVendingMachineContainer.find('.digit');
+		$consumerContainer.on('click', '.coin-denominations', function(event){
 
 			$target = $(event.target);
 
 			var number = 1;
-			var id = $target.attr('data-id');
 
+			var $vendingMachine = $('.vending-machine');
+			var $digit = $vendingMachine.find('.digit');
+
+			var id = $target.attr('data-id');
+			
+			
 			var consumerNumberOfCoins = consumer.cash.decreaseNumberOfCoins(id);
 
 			if(	consumerNumberOfCoins >= 0 ){
@@ -205,7 +220,7 @@
 
 				var vendingNumberOfCoins = vendingMachine.getCash().getNumberOfCoins( id );
 
-				$('.coffee-vending-machine').find('.coins').filter('[data-id="' + id + '"]').find('.badge').html( vendingNumberOfCoins );
+				$vendingMachine.find('.coin-denomination').filter('[data-id="' + id + '"]').find('.badge').html( vendingNumberOfCoins );
 
 				$digit.find('.digit-value').html(money);
 				$target.find('.badge').html(consumerNumberOfCoins);
@@ -215,9 +230,22 @@
 
 </script>
 
+<!--Определение шаблона кошелька-->
+<script id="cash-template" type="text/html">
+	<div class="cash-container">
+		<div class="cash">
+			<ul class="coin-denominations list-group">
+				{{#coins}}
+					<li class="coin-denomination list-group-item" data-id="{{id}}">{{name}}<span class="badge">{{count}}</span></li>
+				{{/coins}}
+			</ul>
+		</div>
+	</div>
+</script>
+
 <!--Определение шаблона вендинговой машины-->
 <script id="vending-machine-template" type="text/html">
-	<div class="coffee-vending-machine">
+	<div class="vending-machine">
 		<div class="scoreboard">
 			<div class="message"></div>
 			<div class="digit">
@@ -226,16 +254,10 @@
 			</div>
 		</div>
 		<div class="vending-machine-info">
-			<div class="vending-machine-cash">
-				<ul class="list-of-coins-by-rating list-group">
-					{{#coins}}
-						<li class="coins list-group-item" data-id="{{id}}">{{name}}<span class="badge">{{count}}</span></li>
-					{{/coins}}
-				</ul>
-			</div>
+			{{{cash}}}
 		</div>
 		<div class="glass-case">
-			<div class="product-list">
+			<div class="products">
 				<ul class="list-group">
 					{{#products}}
 						<li class="list-group-item" data-id='{{id}}'>
@@ -260,20 +282,10 @@
 	</div>
 </script>
 
-<script id="vending-machine-info-template" type="text/html">
-
-</script>
-
 <!--Определение шаблона кошелька покупателя-->
 <script id="consumer-template" type="text/html">
 	<div class="consumer">
-		<div class="consumer-cash">
-			<ul class="list-of-coins-by-rating list-group">
-				{{#coins}}
-					<li class="coins list-group-item" data-id="{{id}}">{{name}}<span class="badge">{{count}}</span></li>
-				{{/coins}}
-			</ul>
-		</div>
+		{{{cash}}}
 	</div>
 </script>
 

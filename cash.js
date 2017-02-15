@@ -15,6 +15,10 @@
 				return null;
 			};
 
+			this.getСoinDenominations = function(){
+				return JSON.parse( JSON.stringify( data ) );
+			};
+
 			this.getNumberOfCoins = function( id ){
 
 				var index = getIndexOfCoin(id);

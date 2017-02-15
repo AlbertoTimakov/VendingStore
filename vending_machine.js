@@ -65,28 +65,23 @@
 
 				this.giveChange = function(){
 
-					var coins = [ 
-						{ id: 1, name: '10 рублей', value: 10 }, 
-						{ id: 2, name: '5 рублей', value: 5 }, 
-						{ id: 3, name: '2 рубля', value: 2 }, 
-						{ id: 4, name: '1 рубль', value: 1 } 
-					];
+					var coinDenominations = cash.getСoinDenominations(); 
 
 					var change = [];
 
-					for( var i = 0; payment > 0 && i < coins.length; i++ ){
+					for( var i = 0; payment > 0 && i < coinDenominations.length; i++ ){
 
 						var count = 0;
 
-						while( payment >= coins[i].value ){
+						while( payment >= coinDenominations[i].value ){
 
-							var restOfCoins = cash.decreaseNumberOfCoins( coins[i].id );
+							var restOfCoins = cash.decreaseNumberOfCoins( coinDenominations[i].id );
 
 							if( restOfCoins >= 0 ){
 
 								count++;
 
-								payment -= coins[i].value;
+								payment -= coinDenominations[i].value;
 							}else{
 
 								break;
@@ -94,9 +89,9 @@
 						}
 
 						change.push( { 
-							id: coins[i].id, 
-							name: coins[i].name, 
-							value: coins[i].value, 
+							id: coinDenominations[i].id, 
+							name: coinDenominations[i].name, 
+							value: coinDenominations[i].value, 
 							count: count 
 						} );
 					}
